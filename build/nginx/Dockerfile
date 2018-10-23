@@ -1,0 +1,16 @@
+FROM nginx:latest
+
+MAINTAINER Paulo Dias <prbdias@gmail.com>
+
+RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+RUN dpkg-reconfigure -f noninteractive tzdata
+ADD nginx.conf /etc/nginx/
+ADD site.conf /etc/nginx/sites-available/
+RUN rm -rf /etc/nginx/conf.d/default.conf
+RUN echo "upstream php-upstream { server php-fpm:9000; }" > /etc/nginx/conf.d/upstream.conf
+
+RUN usermod -u 1000 www-data
+
+EXPOSE 80 443
+
+CMD ["nginx"]
